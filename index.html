@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title data-i18n="app_title">Expense Tracker</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .summary-card {
+      position: relative;
+      width: 300px;
+      padding: 20px;
+      background: #f8f8f8;
+      border-radius: 12px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
+    }
+
+    .summary-card h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+    }
+
+    .summary-card img.icon {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+    }
+
+    .dashboard-summary {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .summary-card p {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    .language-selector {
+      margin: 20px 0;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <h2 class="logo">
+        <img src="logo.png" alt="Logo" class="logo-img" />
+        <span data-i18n="app_title">Expense Tracker</span>
+      </h2>
+      <ul class="menu">
+        <li id="dashboardBtn" data-i18n="dashboard">Dashboard</li>
+        <li id="budgetsBtn" data-i18n="budgets">Budgets</li>
+        <li id="expensesBtn" data-i18n="expenses">Expenses</li>
+      </ul>
+      <div class="language-selector">
+        <label for="languageSelect" data-i18n="language">Language:</label>
+        <select id="languageSelect">
+          <option value="en">English</option>
+          <option value="hi">हिंदी</option>
+          <option value="mr">मराठी</option>
+        </select>
+      </div>
+      <div class="profile">G Profile</div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <div id="contentArea">
+        <h1 id="welcomeMessage" data-i18n="welcome">Welcome to Dashboard</h1>
+      </div>
+
+      <div id="dashboard" style="display: none;">
+        <h2 data-i18n="dashboard">Dashboard</h2>
+        <div class="dashboard-summary">
+          <div class="summary-card">
+            <h3 data-i18n="total_budget">Total Budget</h3>
+            <p id="total-budget">₹0</p>
+            <img src="image1.png" alt="icon" class="icon" />
+          </div>
+          <div class="summary-card">
+            <h3 data-i18n="total_spent">Total Spent</h3>
+            <p id="total-spent">₹0</p>
+            <img src="image2.png" alt="icon" class="icon" />
+          </div>
+          <div class="summary-card">
+            <h3 data-i18n="total_budgets">Total No of Budgets</h3>
+            <p id="total-budgets">0</p>
+            <img src="image3.png" alt="icon" class="icon" />
+          </div>
+        </div>
+
+        <div class="dashboard-layout">
+          <div class="chart-section">
+            <canvas id="budgetChart" height="100"></canvas>
+            <p id="noChartMessage" style="display: none; margin-top: 20px;" data-i18n="no_chart">No budgets to display chart.</p>
+          </div>
+        </div>
+
+        <div class="dashboard-grid">
+          <div class="latest-budgets">
+            <h3 data-i18n="latest_budgets">Latest Budgets</h3>
+            <div id="latestBudgetsList" class="budget-cards-container"></div>
+          </div>
+          <div class="latest-expenses">
+            <h3 data-i18n="latest_expenses">Latest Expenses</h3>
+            <ul id="latestExpensesList"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="budgets" style="display: none;">
+        <h2 data-i18n="my_budgets">My Budgets</h2>
+        <div class="budgets-container" id="budgetsContainer"></div>
+      </div>
+
+      <div id="expenses" style="display: none;">
+        <h2 data-i18n="my_expenses">My Expenses</h2>
+        <div class="add-expense">
+          <input type="text" id="expense-name" placeholder="Expense name" />
+          <input type="number" id="expense-amount" placeholder="Amount" />
+          <button id="addExpenseBtn" data-i18n="add_expense">Add Expense</button>
+        </div>
+        <div class="expense-summary">
+          <table class="expense-table" id="expenseTable">
+            <thead>
+              <tr>
+                <th data-i18n="name">Name</th>
+                <th data-i18n="amount">Amount</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+
+  <!-- Language & Navigation Script -->
+  <script>
+    const translations = {
+      en: {
+        app_title: "Expense Tracker",
+        dashboard: "Dashboard",
+        budgets: "Budgets",
+        expenses: "Expenses",
+        welcome: "Welcome to Dashboard",
+        total_budget: "Total Budget",
+        total_spent: "Total Spent",
+        total_budgets: "Total No of Budgets",
+        no_chart: "No budgets to display chart.",
+        latest_budgets: "Latest Budgets",
+        latest_expenses: "Latest Expenses",
+        my_budgets: "My Budgets",
+        my_expenses: "My Expenses",
+        add_expense: "Add Expense",
+        name: "Name",
+        amount: "Amount",
+        language: "Language:"
+      },
+      hi: {
+        app_title: "खर्च ट्रैकर",
+        dashboard: "डैशबोर्ड",
+        budgets: "बजट्स",
+        expenses: "खर्चे",
+        welcome: "डैशबोर्ड में आपका स्वागत है",
+        total_budget: "कुल बजट",
+        total_spent: "कुल खर्च",
+        total_budgets: "कुल बजट की संख्या",
+        no_chart: "प्रदर्शित करने के लिए कोई बजट नहीं।",
+        latest_budgets: "नवीनतम बजट्स",
+        latest_expenses: "नवीनतम खर्चे",
+        my_budgets: "मेरे बजट्स",
+        my_expenses: "मेरे खर्चे",
+        add_expense: "खर्च जोड़ें",
+        name: "नाम",
+        amount: "राशि",
+        language: "भाषा:"
+      },
+      mr: {
+        app_title: "खर्च ट्रॅकर",
+        dashboard: "डॅशबोर्ड",
+        budgets: "बजेट्स",
+        expenses: "खर्च",
+        welcome: "डॅशबोर्डवर स्वागत आहे",
+        total_budget: "एकूण बजेट",
+        total_spent: "एकूण खर्च",
+        total_budgets: "एकूण बजेट्स",
+        no_chart: "प्रदर्शित करण्यासाठी बजेट्स नाहीत.",
+        latest_budgets: "अलीकडील बजेट्स",
+        latest_expenses: "अलीकडील खर्च",
+        my_budgets: "माझे बजेट्स",
+        my_expenses: "माझे खर्च",
+        add_expense: "खर्च जोडा",
+        name: "नाव",
+        amount: "रक्कम",
+        language: "भाषा:"
+      }
+    };
+
+    function translatePage(lang) {
+      document.querySelectorAll("[data-i18n]").forEach(el => {
+        const key = el.getAttribute("data-i18n");
+        if (translations[lang] && translations[lang][key]) {
+          el.textContent = translations[lang][key];
+        }
+      });
+    }
+
+    document.getElementById("languageSelect").addEventListener("change", function () {
+      translatePage(this.value);
+    });
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const welcomeMessage = document.getElementById("welcomeMessage");
+      const currentUser = JSON.parse(localStorage.getItem("currentUser"));
+      const defaultLang = document.getElementById("languageSelect").value || "en";
+
+      if (currentUser && currentUser.name) {
+        welcomeMessage.textContent = `Welcome back, ${currentUser.name}!`;
+      }
+
+      translatePage(defaultLang);
+
+      const dashboard = document.getElementById("dashboard");
+      const budgets = document.getElementById("budgets");
+      const expenses = document.getElementById("expenses");
+      const contentArea = document.getElementById("contentArea");
+
+      document.getElementById("dashboardBtn").addEventListener("click", () => {
+        dashboard.style.display = "block";
+        budgets.style.display = "none";
+        expenses.style.display = "none";
+        contentArea.style.display = "none";
+      });
+
+      document.getElementById("budgetsBtn").addEventListener("click", () => {
+        dashboard.style.display = "none";
+        budgets.style.display = "block";
+        expenses.style.display = "none";
+        contentArea.style.display = "none";
+      });
+
+      document.getElementById("expensesBtn").addEventListener("click", () => {
+        dashboard.style.display = "none";
+        budgets.style.display = "none";
+        expenses.style.display = "block";
+        contentArea.style.display = "none";
+      });
+    });
+  </script>
+  <script>
+    // Read Aloud Feature
+    let isReadAloudEnabled = false;
+    let currentSpeech = null;
+  
+    // Function to detect language (Hindi and Marathi)
+    function detectLanguage(text) {
+      // Check for Hindi or Marathi (Devanagari script)
+      if (/[\u0900-\u097F]/.test(text)) {
+        // If the text contains Devanagari characters, assume Hindi or Marathi
+        return 'hi-IN'; // Default to Hindi (Marathi shares the same script)
+      } else {
+        return 'en-US'; // Default to English
+      }
+    }
+  
+    // Function to read text aloud
+    function readText(text) {
+      if (currentSpeech) {
+        window.speechSynthesis.cancel(); // Stop any ongoing speech immediately
+      }
+      const speech = new SpeechSynthesisUtterance(text);
+      speech.volume = 1;
+      speech.rate = 1.2; // Slightly increase the speech rate for faster reading
+      speech.pitch = 1;
+      speech.lang = detectLanguage(text); // Set language dynamically
+      window.speechSynthesis.speak(speech);
+      currentSpeech = speech;
+    }
+  
+    // Function to enable/disable read aloud on hover
+    function toggleReadAloud() {
+      isReadAloudEnabled = !isReadAloudEnabled;
+      const button = document.getElementById('toggleButton');
+      if (button) {
+        button.textContent = isReadAloudEnabled ? 'Disable Read Aloud' : 'Enable Read Aloud';
+      }
+  
+      if (!isReadAloudEnabled && currentSpeech) {
+        window.speechSynthesis.cancel(); // Stop speech if disabled
+      }
+    }
+  
+    // Add hover event listeners to all text elements
+    document.addEventListener('mouseover', (event) => {
+      if (isReadAloudEnabled && event.target.innerText) {
+        readText(event.target.innerText);
+      }
+    });
+  
+    // Add a toggle button to the page
+    function addToggleButton() {
+      const button = document.createElement('button');
+      button.id = 'toggleButton';
+      button.textContent = 'Enable Read Aloud';
+      button.style.position = 'fixed';
+      button.style.bottom = '60px'; // Move the button upward
+      button.style.right = '20px';
+      button.style.padding = '10px 20px';
+      button.style.backgroundColor = '#4CAF50';
+      button.style.color = 'white';
+      button.style.border = 'none';
+      button.style.borderRadius = '5px';
+      button.style.cursor = 'pointer';
+      button.style.zIndex = '1000';
+      button.addEventListener('click', toggleReadAloud);
+      document.body.appendChild(button);
+    }
+  
+    // Initialize the feature
+    function initReadAloud() {
+      if (!window.speechSynthesis) {
+        alert("Your browser does not support the Read Aloud feature.");
+        return;
+      }
+      addToggleButton();
+    }
+  
+    // Run the initialization when the page loads
+    window.onload = initReadAloud;
+  </script>
+</body>
+</html>
